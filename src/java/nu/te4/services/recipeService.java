@@ -31,7 +31,7 @@ public class recipeService {
     @GET
     @Path("recipes")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRecipe(@Context HttpHeaders httpHeaders) {
+    public Response getRecipe() {
 
         JsonArray data = RecipeBean.getRecipe();
 
@@ -84,7 +84,7 @@ public class recipeService {
         return Response.status(Response.Status.CREATED).build();
     }
     
-        @POST
+    @POST
     @Path("rec_ing")
     @Consumes(MediaType.APPLICATION_JSON)
 

@@ -39,7 +39,8 @@ public class recipeBean {
                 String user = data.getString("username");
                 String cat = data.getString("category_name");
 
-
+                System.out.println("test2");
+                
                 jsonArrayBuilder.add(Json.createObjectBuilder()
                         .add("recipe_id", id_rec)
                         .add("recipe_name", name)
@@ -47,11 +48,13 @@ public class recipeBean {
                         .add("recipe_instruction", ins)
                         .add("username", user)
                         .add("category_name", cat).build());
+                
+                System.out.println("test3");
             }
             connection.close();
             return jsonArrayBuilder.build();
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            System.out.println(ex.getMessage() + "fel här");
         }
         return null;
     }
