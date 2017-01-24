@@ -21,6 +21,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import nu.te4.beans.recipeBean;
+import nu.te4.support.User;
 
 @Path("/")
 public class recipeService {
@@ -45,9 +46,23 @@ public class recipeService {
     @GET
     @Path("ingredient")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getIngredient(@Context HttpHeaders httpHeaders) {
+    public Response getIngredient() {
 
         JsonArray data = RecipeBean.getIngredient();
+
+        if (data == null) {
+            return Response.serverError().build();
+        }
+
+        return Response.ok(data).build();
+    }
+    
+    @GET
+    @Path("recipe/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRecipeId(@PathParam("id") int id) {
+
+        JsonArray data = RecipeBean.getRecipeId(id);
 
         if (data == null) {
             return Response.serverError().build();
@@ -60,7 +75,11 @@ public class recipeService {
     @Path("recipe")
     @Consumes(MediaType.APPLICATION_JSON)
 
-    public Response addRecipe(String body) {
+    public Response addRecipe(String body, @Context HttpHeaders httpHeaders) {
+        
+        if (!User.Authoricate(httpHeaders)) {
+            return Response.status(401).build();
+        }
         
         System.out.println(body);
         if (!RecipeBean.addRecipe(body)) {
@@ -69,6 +88,7 @@ public class recipeService {
 
         return Response.status(Response.Status.CREATED).build();
     }
+    
     
     @POST
     @Path("ingredient")

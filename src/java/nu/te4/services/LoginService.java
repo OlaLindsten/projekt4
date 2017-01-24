@@ -16,8 +16,10 @@ public class LoginService {
     @Path("login")
     public Response checkLogin(@Context HttpHeaders httpHeaders){
         if (!User.Authoricate(httpHeaders)) {
+            System.out.println("aaaa");
             return Response.status(401).build();
         }
+        System.out.println("bbbb");
         return Response.ok().build();
     }
     

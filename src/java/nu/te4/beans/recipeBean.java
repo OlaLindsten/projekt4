@@ -21,6 +21,8 @@ import nu.te4.support.ConnectionFactory;
 @Stateless
 public class recipeBean {
 
+
+
     public JsonArray getRecipe() {
 
         try {
@@ -70,9 +72,11 @@ public class recipeBean {
             System.out.println("hejehejehehjehejbeowbg");
             JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
             while (data.next()) {
+                int ing_id = data.getInt("ingredient_id");
                 String id_rec = data.getString("ingredient_name");
 
-                jsonArrayBuilder.add(Json.createObjectBuilder()
+                jsonArrayBuilder.add(Json.createObjectBuilder()     
+                        .add("ingredient_id", ing_id)
                         .add("ingredient_name", id_rec).build());
             }
             connection.close();
@@ -82,7 +86,41 @@ public class recipeBean {
         }
         return null;
     }
-
+    
+    public JsonArray getRecipeId(int id) {
+        try {
+            System.out.println("hejs");
+            Connection connection = ConnectionFactory.make("127.0.0.1");
+            String sql = "SELECT *FROM info_recipe WHERE recipe_id =? ";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet data = stmt.executeQuery();
+            JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+            while (data.next()){
+                int id_rec = data.getInt("recipe_id");
+                String name = data.getString("recipe_name");
+                String des = data.getString("recipe_description");
+                String ins = data.getString("recipe_instruction");
+                String user = data.getString("username");
+                String cat = data.getString("category_name");
+                
+                jsonArrayBuilder.add(Json.createObjectBuilder()
+                        .add("recipe_id", id_rec)
+                        .add("recipe_name", name)
+                        .add("recipe_description", des)
+                        .add("recipe_instruction", ins)
+                        .add("username", user)
+                        .add("category_name", cat).build());               
+                
+            }
+            connection.close();
+            System.out.println("hej2");
+            return jsonArrayBuilder.build();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 
     public boolean addRecipe(String body) {
         JsonReader jsonReader = Json.createReader((new StringReader(body)));
