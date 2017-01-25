@@ -21,8 +21,6 @@ import nu.te4.support.ConnectionFactory;
 @Stateless
 public class recipeBean {
 
-
-
     public JsonArray getRecipe() {
 
         try {
@@ -40,17 +38,19 @@ public class recipeBean {
                 String ins = data.getString("recipe_instruction");
                 String user = data.getString("username");
                 String cat = data.getString("category_name");
+                String img = data.getString("image");
 
                 System.out.println("test2");
-                
+
                 jsonArrayBuilder.add(Json.createObjectBuilder()
                         .add("recipe_id", id_rec)
                         .add("recipe_name", name)
                         .add("recipe_description", des)
                         .add("recipe_instruction", ins)
                         .add("username", user)
-                        .add("category_name", cat).build());
-                
+                        .add("category_name", cat)
+                        .add("image", img).build());
+
                 System.out.println("test3");
             }
             connection.close();
@@ -60,10 +60,10 @@ public class recipeBean {
         }
         return null;
     }
-    
-    public JsonArray getIngredient(){
-       
-                try {
+
+    public JsonArray getIngredient() {
+
+        try {
             Connection connection = ConnectionFactory.make("127.0.0.1");
             Statement stmt = connection.createStatement();
             String sql = "SELECT * FROM ingredient";
@@ -75,7 +75,7 @@ public class recipeBean {
                 int ing_id = data.getInt("ingredient_id");
                 String id_rec = data.getString("ingredient_name");
 
-                jsonArrayBuilder.add(Json.createObjectBuilder()     
+                jsonArrayBuilder.add(Json.createObjectBuilder()
                         .add("ingredient_id", ing_id)
                         .add("ingredient_name", id_rec).build());
             }
@@ -86,7 +86,7 @@ public class recipeBean {
         }
         return null;
     }
-    
+
     public JsonArray getRecipeId(int id) {
         try {
             System.out.println("hejs");
@@ -96,22 +96,24 @@ public class recipeBean {
             stmt.setInt(1, id);
             ResultSet data = stmt.executeQuery();
             JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-            while (data.next()){
+            while (data.next()) {
                 int id_rec = data.getInt("recipe_id");
                 String name = data.getString("recipe_name");
                 String des = data.getString("recipe_description");
                 String ins = data.getString("recipe_instruction");
                 String user = data.getString("username");
                 String cat = data.getString("category_name");
-                
+                String img = data.getString("image");
+
                 jsonArrayBuilder.add(Json.createObjectBuilder()
                         .add("recipe_id", id_rec)
                         .add("recipe_name", name)
                         .add("recipe_description", des)
                         .add("recipe_instruction", ins)
                         .add("username", user)
-                        .add("category_name", cat).build());               
-                
+                        .add("category_name", cat)
+                        .add("image", img).build());
+
             }
             connection.close();
             System.out.println("hej2");
@@ -122,6 +124,59 @@ public class recipeBean {
         }
     }
 
+    public JsonArray getRecipeIngredients(int id) {
+        try {
+            Connection connection = ConnectionFactory.make("127.0.0.1");
+            Statement stmt = connection.createStatement();
+            String sql = "SELECT amount,(SELECT ingredient_name FROM ingredient where ingredient_id = recipe_ingredient.ingredient_ID) AS inge FROM recipe_ingredient WHERE recipe_ingredient.recipe_ID = " + id;
+            ResultSet data = stmt.executeQuery(sql);
+            //arraybuilder
+            JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+            while (data.next()) {
+                System.out.println("ingredient_name");
+                System.out.println("amount");
+                System.out.println("inge");
+                String amount = data.getString("amount");
+                String name = data.getString("inge");
+
+                jsonArrayBuilder.add(Json.createObjectBuilder()
+                        .add("amount", amount)
+                        .add("inge", name).build());
+            }
+            connection.close();
+            return jsonArrayBuilder.build();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return null;
+    }
+
+    public JsonArray getCategory() {
+
+        try {
+            Connection connection = ConnectionFactory.make("127.0.0.1");
+            Statement stmt = connection.createStatement();
+            String sql = "SELECT * FROM category";
+            ResultSet data = stmt.executeQuery(sql);
+            //arraybuilder
+            System.out.println("fgfggfg");
+            JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+            while (data.next()) {
+                int cat_id = data.getInt("category_id");
+                String cat_name = data.getString("category_name");
+
+                jsonArrayBuilder.add(Json.createObjectBuilder()
+                        .add("category_id", cat_id)
+                        .add("category_name", cat_name).build());
+            }
+            connection.close();
+            return jsonArrayBuilder.build();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return null;
+    }
+
     public boolean addRecipe(String body) {
         JsonReader jsonReader = Json.createReader((new StringReader(body)));
         JsonObject data = jsonReader.readObject();
@@ -130,13 +185,19 @@ public class recipeBean {
         String rec_name = data.getString("recipe_name");
         String rec_desc = data.getString("recipe_description");
         String rec_inst = data.getString("recipe_instruction");
+        int rec_aut = data.getInt("recipe_author");
+        int rec_cat = data.getInt("recipe_category");
+        String rec_img = data.getString("image");
 
         try {
             Connection connection = ConnectionFactory.make("127.0.0.1");
-            PreparedStatement stmt = connection.prepareStatement("INSERT INTO recipe VALUES(NULL,?,?,?)");
+            PreparedStatement stmt = connection.prepareStatement("INSERT INTO recipe VALUES(NULL,?,?,?,?,?,?)");
             stmt.setString(1, rec_name);
             stmt.setString(2, rec_desc);
             stmt.setString(3, rec_inst);
+            stmt.setInt(4, rec_aut);
+            stmt.setInt(5, rec_cat);
+            stmt.setString(6, rec_img);
             stmt.executeUpdate();
             connection.close();
             return true;
@@ -238,7 +299,6 @@ public class recipeBean {
         try {
             Connection connection = ConnectionFactory.make("127.0.0.1");
             PreparedStatement stmt = connection.prepareStatement("UPDATE recipe SET recipe_name = ?, recipe_description = ?, recipe_instruction = ?, recipe_category =? WHERE recipe_id =?");
-
 
             stmt.setString(1, rec_nam);
             stmt.setString(2, rec_des);

@@ -58,11 +58,39 @@ public class recipeService {
     }
     
     @GET
+    @Path("ingredients/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRecipeIngredients(@PathParam("id")int id) {
+        
+        JsonArray data = RecipeBean.getRecipeIngredients(id);
+
+        if (data == null) {
+            return Response.serverError().build();
+        }
+
+        return Response.ok(data).build();
+    }
+    
+    @GET
     @Path("recipe/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRecipeId(@PathParam("id") int id) {
 
         JsonArray data = RecipeBean.getRecipeId(id);
+
+        if (data == null) {
+            return Response.serverError().build();
+        }
+
+        return Response.ok(data).build();
+    }
+    
+    @GET
+    @Path("category")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCategory() {
+
+        JsonArray data = RecipeBean.getCategory();
 
         if (data == null) {
             return Response.serverError().build();
