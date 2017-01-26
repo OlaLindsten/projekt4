@@ -91,7 +91,7 @@ public class recipeBean {
         try {
             System.out.println("hejs");
             Connection connection = ConnectionFactory.make("127.0.0.1");
-            String sql = "SELECT *FROM info_recipe WHERE recipe_id =? ";
+            String sql = "SELECT * FROM info_recipe WHERE recipe_id = ?";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, id);
             ResultSet data = stmt.executeQuery();
@@ -182,6 +182,8 @@ public class recipeBean {
         JsonObject data = jsonReader.readObject();
         jsonReader.close();
 
+        System.out.println("1");
+        
         String rec_name = data.getString("recipe_name");
         String rec_desc = data.getString("recipe_description");
         String rec_inst = data.getString("recipe_instruction");
@@ -189,6 +191,8 @@ public class recipeBean {
         int rec_cat = data.getInt("recipe_category");
         String rec_img = data.getString("image");
 
+        System.out.println("recipe_auther");
+        
         try {
             Connection connection = ConnectionFactory.make("127.0.0.1");
             PreparedStatement stmt = connection.prepareStatement("INSERT INTO recipe VALUES(NULL,?,?,?,?,?,?)");
@@ -198,6 +202,9 @@ public class recipeBean {
             stmt.setInt(4, rec_aut);
             stmt.setInt(5, rec_cat);
             stmt.setString(6, rec_img);
+            
+            System.out.println("3");
+            
             stmt.executeUpdate();
             connection.close();
             return true;
