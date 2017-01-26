@@ -21,6 +21,7 @@ import nu.te4.support.ConnectionFactory;
 @Stateless
 public class recipeBean {
 
+    //hämtar alla recept
     public JsonArray getRecipe() {
 
         try {
@@ -61,6 +62,7 @@ public class recipeBean {
         return null;
     }
 
+    //hämtar ingredients
     public JsonArray getIngredient() {
 
         try {
@@ -87,6 +89,7 @@ public class recipeBean {
         return null;
     }
 
+    //hämtar ett specifikt id
     public JsonArray getRecipeId(int id) {
         try {
             System.out.println("hejs");
@@ -124,6 +127,7 @@ public class recipeBean {
         }
     }
 
+    //hämtar ingredienser och amount
     public JsonArray getRecipeIngredients(int id) {
         try {
             Connection connection = ConnectionFactory.make("127.0.0.1");
@@ -151,6 +155,7 @@ public class recipeBean {
         return null;
     }
 
+    //hämtar kategorier
     public JsonArray getCategory() {
 
         try {
@@ -177,6 +182,7 @@ public class recipeBean {
         return null;
     }
 
+    //lägger till recept
     public boolean addRecipe(String body) {
         JsonReader jsonReader = Json.createReader((new StringReader(body)));
         JsonObject data = jsonReader.readObject();
@@ -191,7 +197,7 @@ public class recipeBean {
         int rec_cat = data.getInt("recipe_category");
         String rec_img = data.getString("image");
 
-        System.out.println("recipe_auther");
+        System.out.println("recipe_author");
         
         try {
             Connection connection = ConnectionFactory.make("127.0.0.1");
@@ -215,6 +221,7 @@ public class recipeBean {
 
     }
 
+    //Lägger till ingredient
     public boolean addIngredient(String body) {
         JsonReader jsonReader = Json.createReader((new StringReader(body)));
         JsonObject data = jsonReader.readObject();
@@ -235,8 +242,8 @@ public class recipeBean {
         }
 
     }
-
-    public boolean addRec_ing(String body) {
+    //Lägger till amount
+        public boolean addRec_ing(String body) {
         JsonReader jsonReader = Json.createReader((new StringReader(body)));
         JsonObject data = jsonReader.readObject();
         jsonReader.close();
@@ -259,7 +266,7 @@ public class recipeBean {
         }
 
     }
-
+        //tar bort recept
     public boolean deleteRecipe(int id) {
         try {
             Connection connection = ConnectionFactory.make("127.0.0.1");
@@ -273,7 +280,7 @@ public class recipeBean {
             return false;
         }
     }
-
+    //tar bort ettett visst id --> används ej
     public boolean deleteIngredient(int id) {
         try {
             Connection connection = ConnectionFactory.make("127.0.0.1");
@@ -287,7 +294,7 @@ public class recipeBean {
             return false;
         }
     }
-
+    //uppdaterar ett recept -> används inte
     public boolean updateRecipe(String body) {
 
         JsonReader jsonReader = Json.createReader(new StringReader(body));
@@ -322,7 +329,7 @@ public class recipeBean {
             return false;
         }
     }
-
+    //uppdaterar ingredients -> används inte
     public boolean updateIngredient(String body) {
 
         JsonReader jsonReader = Json.createReader(new StringReader(body));
